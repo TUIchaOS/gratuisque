@@ -1,54 +1,59 @@
 #pragma once
-#include <string>
 
+#include <cstdint>
+#include <string>
+#include <vector>
+
+typedef std::pair<uint16_t, uint16_t> Coord;
+
+// Base Widget class
 class Widget
 {
-public:
-        int Height;
-        int Width;
-        int Pos;
+protected:
+        uint16_t _height;
+        uint16_t _width;
+        Coord _coord;
 
-        Widget(const int height, const int width, const int pos)
-            : Height(height), Width(width), Pos(pos) {}
+public:
+        Widget(uint16_t height, uint16_t width, Coord coord)
+            : _height(height), _width(width), _coord(coord) {}
 
         virtual ~Widget() = default;
 
-        void Draw();
-        void Resize(const int new_height, const int new_width);
-        void Move(const int new_pos);
-        void Update();
+        virtual void Draw();
+        virtual void Resize(int new_height, int new_width);
+        virtual void Move(int new_pos);
+        virtual void Update();
 };
 
+// Button class
 class Button : public Widget
 {
 private:
         std::string _label;
 
 public:
-        Button(const int height, const int width, const int pos, const std::string &label)
-            : Widget(height, width, pos), _label(label) {}
+        Button(uint16_t height, uint16_t width, Coord coord, const std::string &label)
+            : Widget(height, width, coord), _label(label) {}
 
         void Click();
         void ChangeLabel(const std::string &new_label);
         void SetEnabled(bool enabled);
-        void SetDisabled(bool disabled);
         bool IsEnabled() const;
-        bool IsDisabled() const;
-        bool IsVisible() const;
-        bool IsHidden() const;
         void SetFocus();
         bool IsFocused() const;
         std::string GetLabel() const;
 };
 
+// TextBox class
 class TextBox : public Widget
 {
 private:
         std::string _text;
 
 public:
-        TextBox(const int height, const int width, const int pos, const std::string &text)
-            : Widget(height, width, pos), _text(text) {}
+        TextBox(uint16_t height, uint16_t width, Coord coord, const std::string &text)
+            : Widget(height, width, coord), _text(text) {}
 
         void ChangeText(const std::string &new_text);
         std::string GetText() const;
@@ -56,14 +61,15 @@ public:
         void ClearText();
 };
 
+// Window class
 class Window : public Widget
 {
 private:
         std::string _title;
 
 public:
-        Window(const int height, const int width, const int pos, const std::string &title)
-            : Widget(height, width, pos), _title(title) {}
+        Window(uint16_t height, uint16_t width, Coord coord, const std::string &title)
+            : Widget(height, width, coord), _title(title) {}
 
         void ChangeTitle(const std::string &new_title);
         void Show();
@@ -74,6 +80,7 @@ public:
         std::string GetTitle() const;
 };
 
+// InputField class
 class InputField : public Widget
 {
 private:
@@ -81,27 +88,117 @@ private:
         std::string _value;
 
 public:
-        InputField(const int height, const int width, const int pos, const std::string &placeholder)
-            : Widget(height, width, pos), _placeholder(placeholder), _value("") {}
+        InputField(uint16_t height, uint16_t width, Coord coord, const std::string &placeholder)
+            : Widget(height, width, coord), _placeholder(placeholder), _value("") {}
 
         void SetPlaceholder(const std::string &placeholder);
         void SetValue(const std::string &value);
-        void SetReadOnly(bool read_only);
-        void SetMinLength(int min_length);
-        void SetMaxLength(int max_length);
-        void Focus();
-        void ClearValue();
-        void Validate();
-        void ShowError(const std::string &error_message);
-        void HideError();
-        void Enable();
-        void Disable();
         bool IsValid() const;
-        bool IsEnabled() const;
-        bool IsReadOnly() const;
-        int GetMaxLength() const;
-        int GetMinLength() const;
         std::string GetValue() const;
         std::string GetPlaceholder() const;
-        std::string GetError() const;
+};
+
+// ListBox class
+class ListBox : public Widget
+{
+private:
+        std::vector<std::string> _items;
+        int _selected_index;
+
+public:
+        ListBox(uint16_t height, uint16_t width, Coord coord)
+            : Widget(height, width, coord), _selected_index(-1) {}
+
+        void AddItem(const std::string &item);
+        void RemoveItem(const std::string &item);
+        void SelectItem(int index);
+        std::string GetSelectedItem() const;
+        std::vector<std::string> GetItems() const;
+};
+
+// ProgressBar class
+class ProgressBar : public Widget
+{
+private:
+        uint16_t _value;
+        uint16_t _max_value;
+        bool _indeterminate;
+
+public:
+        ProgressBar(uint16_t height, uint16_t width, Coord coord, int32_t max_value = 100, int32_t value = 0)
+            : Widget(height, width, coord), _value(value), _max_value(max_value), _indeterminate(false) {}
+
+        void SetValue(int32_t value);
+        void SetMaxValue(int32_t max_value);
+        bool IsIndeterminate() const;
+        int32_t GetValue() const;
+        int32_t GetMaxValue() const;
+};
+
+// CheckBox class
+class CheckBox : public Widget
+{
+private:
+        bool _checked;
+        std::string _label;
+
+public:
+        CheckBox(uint16_t height, uint16_t width, Coord coord, const std::string &label)
+            : Widget(height, width, coord), _checked(false), _label(label) {}
+
+        void SetChecked(bool checked);
+        bool IsChecked() const;
+        std::string GetLabel() const;
+};
+
+// RadioButton class
+class RadioButton : public Widget
+{
+private:
+        bool _checked;
+        std::string _label;
+        uint8_t _group;
+
+public:
+        RadioButton(uint16_t height, uint16_t width, Coord coord, const std::string &label, uint8_t group = 0)
+            : Widget(height, width, coord), _checked(false), _label(label), _group(group) {}
+
+        void SetChecked(bool checked);
+        bool IsChecked() const;
+        std::string GetLabel() const;
+        uint8_t GetGroup() const;
+};
+
+// Slider class
+class Slider : public Widget
+{
+private:
+        int32_t _value;
+        int32_t _min_value;
+        int32_t _max_value;
+
+public:
+        Slider(uint16_t height, uint16_t width, Coord coord, int32_t min_value = 0, int32_t max_value = 100, int32_t value = 0)
+            : Widget(height, width, coord), _value(value), _min_value(min_value), _max_value(max_value) {}
+
+        void SetValue(int32_t value);
+        int32_t GetValue() const;
+};
+
+// Notification class
+class Notification : public Widget
+{
+private:
+        std::string _message;
+        bool _is_visible;
+
+public:
+        Notification(uint16_t height, uint16_t width, Coord coord, const std::string &message)
+            : Widget(height, width, coord), _message(message), _is_visible(false) {}
+
+        void SetMessage(const std::string &message);
+        std::string GetMessage() const;
+        void Show();
+        void Hide();
+        bool IsVisible() const;
 };

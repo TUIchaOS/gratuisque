@@ -1,6 +1,9 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 
+// Base Event class
 class Event
 {
 public:
@@ -8,32 +11,35 @@ public:
         virtual ~Event() = default;
 };
 
+// MouseEvent class
 class MouseEvent : public Event
 {
 private:
-        int _x;
-        int _y;
-        int _button;
+        u_int16_t _x;
+        u_int16_t _y;
+        int8_t _button;
 
 public:
-        MouseEvent(int x, int y, int button);
+        MouseEvent(u_int16_t x, u_int16_t y, int8_t button);
         void Handle() override;
-        int GetX() const;
-        int GetY() const;
-        int GetButton() const;
+        u_int16_t GetX() const;
+        u_int16_t GetY() const;
+        int8_t GetButton() const;
 };
 
+// KeyboardEvent class
 class KeyboardEvent : public Event
 {
 private:
         char _key;
 
 public:
-        KeyboardEvent(char key);
+        explicit KeyboardEvent(char key);
         void Handle() override;
         char GetKey() const;
 };
 
+// EventManager class
 class EventManager
 {
 public:
