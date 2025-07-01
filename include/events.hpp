@@ -3,15 +3,13 @@
 #include <iostream>
 #include <string>
 
-// Base Event class
 class Event
 {
 public:
-        virtual void Handle() = 0; // Pure virtual function to handle the event
+        virtual void Handle() = 0;
         virtual ~Event() = default;
 };
 
-// MouseEvent class
 class MouseEvent : public Event
 {
 private:
@@ -27,7 +25,6 @@ public:
         int8_t GetButton() const;
 };
 
-// KeyboardEvent class
 class KeyboardEvent : public Event
 {
 private:
@@ -39,7 +36,6 @@ public:
         char GetKey() const;
 };
 
-// EventManager class
 class EventManager
 {
 public:

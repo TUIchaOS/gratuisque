@@ -6,7 +6,7 @@
 
 typedef std::pair<uint16_t, uint16_t> Coord;
 
-// Base Widget class
+// Base
 class Widget
 {
 protected:
@@ -26,7 +26,6 @@ public:
         virtual void Update();
 };
 
-// Button class
 class Button : public Widget
 {
 private:
@@ -39,13 +38,12 @@ public:
         void Click();
         void ChangeLabel(const std::string &new_label);
         void SetEnabled(bool enabled);
-        bool IsEnabled() const;
         void SetFocus();
+        bool IsEnabled() const;
         bool IsFocused() const;
         std::string GetLabel() const;
 };
 
-// TextBox class
 class TextBox : public Widget
 {
 private:
@@ -56,12 +54,11 @@ public:
             : Widget(height, width, coord), _text(text) {}
 
         void ChangeText(const std::string &new_text);
-        std::string GetText() const;
-        int GetTextLength() const;
         void ClearText();
+        int GetTextLength() const;
+        std::string GetText() const;
 };
 
-// Window class
 class Window : public Widget
 {
 private:
@@ -71,16 +68,15 @@ public:
         Window(uint16_t height, uint16_t width, Coord coord, const std::string &title)
             : Widget(height, width, coord), _title(title) {}
 
-        void ChangeTitle(const std::string &new_title);
-        void Show();
+        void Open();
         void Hide();
         void Minimize();
         void Maximize();
         void Close();
+        void ChangeTitle(const std::string &new_title);
         std::string GetTitle() const;
 };
 
-// InputField class
 class InputField : public Widget
 {
 private:
@@ -98,7 +94,6 @@ public:
         std::string GetPlaceholder() const;
 };
 
-// ListBox class
 class ListBox : public Widget
 {
 private:
@@ -116,7 +111,6 @@ public:
         std::vector<std::string> GetItems() const;
 };
 
-// ProgressBar class
 class ProgressBar : public Widget
 {
 private:
@@ -135,7 +129,6 @@ public:
         int32_t GetMaxValue() const;
 };
 
-// CheckBox class
 class CheckBox : public Widget
 {
 private:
@@ -151,7 +144,6 @@ public:
         std::string GetLabel() const;
 };
 
-// RadioButton class
 class RadioButton : public Widget
 {
 private:
@@ -169,7 +161,6 @@ public:
         uint8_t GetGroup() const;
 };
 
-// Slider class
 class Slider : public Widget
 {
 private:
@@ -181,11 +172,10 @@ public:
         Slider(uint16_t height, uint16_t width, Coord coord, int32_t min_value = 0, int32_t max_value = 100, int32_t value = 0)
             : Widget(height, width, coord), _value(value), _min_value(min_value), _max_value(max_value) {}
 
-        void SetValue(int32_t value);
+        void ChangeValue(int32_t value);
         int32_t GetValue() const;
 };
 
-// Notification class
 class Notification : public Widget
 {
 private:
@@ -193,12 +183,28 @@ private:
         bool _is_visible;
 
 public:
-        Notification(uint16_t height, uint16_t width, Coord coord, const std::string &message)
-            : Widget(height, width, coord), _message(message), _is_visible(false) {}
+        Notification(const std::string &message)
+            : Widget(100, 250, {1080, 1920}), _message(message), _is_visible(false) {}
 
-        void SetMessage(const std::string &message);
-        std::string GetMessage() const;
         void Show();
         void Hide();
+        void SetMessage(const std::string &message);
+        std::string GetMessage() const;
         bool IsVisible() const;
+};
+
+class Popup : public Widget
+{
+private:
+        std::string _title;
+        std::string _message;
+
+public:
+        Popup(const std::string &title, const std::string &message, uint16_t width = 300, uint16_t height = 150)
+            : Widget(height, width, {0, 0}), _title(title), _message(message) {}
+
+        void Show();
+        void Close();
+        void ChangeTitle(const std::string &title);
+        void ChangeMessage(const std::string &message);
 };
